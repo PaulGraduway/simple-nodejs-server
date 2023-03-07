@@ -21,11 +21,10 @@ jobs:
         with:
           node-version: "16"
 
-      - name: Authenticate with private NPM package
-        run: touch ~/.npmrc && echo "//registry.npmjs.org/:_authToken=${{ secrets.COMMON_TOKEN }}" > ~/.npmrc
-
       - name: Install Dependencies
         run: cd terraform && ls && npm ci --omit=dev
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.COMMON_TOKEN }}
 
       - name: Rsync Deploy
         uses: burnett01/rsync-deployments@5.1
