@@ -46,5 +46,5 @@ jobs:
 
             #Now we have got the access of EC2 and we will start the deploy .
             cd terraform
-            npm start
+            pm2 start npm -- start
           '
