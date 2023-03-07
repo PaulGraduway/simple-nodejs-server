@@ -22,7 +22,7 @@ jobs:
           node-version: "16"
 
       - name: Authenticate with private NPM package
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.COMMON_TOKEN }}" > ~/.npmrc
+        run: touch ~/.npmrc && echo "//registry.npmjs.org/:_authToken=${{ secrets.COMMON_TOKEN }}" > ~/.npmrc
 
       - name: Install Dependencies
         run: cd terraform && ls && npm ci --omit=dev
