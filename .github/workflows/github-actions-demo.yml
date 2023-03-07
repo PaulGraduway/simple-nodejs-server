@@ -1,0 +1,50 @@
+name: Deploy to AWS
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [master]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: "terraform"
+
+      - name: Install Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      - name: Install Dependencies
+        run: cd terraform && ls && npm ci --omit=dev
+
+      - name: Rsync Deploy
+        uses: burnett01/rsync-deployments@5.1
+        with:
+          switches: -avzr --delete
+          path: ./
+          remote_path: /home/${{ secrets.USER }}/
+          remote_host: ${{ secrets.HOSTNAME}}
+          remote_user: ${{ secrets.USER }}
+          remote_key: "${{ secrets.EC2_PRIVATE_KEY }}"
+
+      - name: SSH in EC2
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY  }}
+          HOSTNAME: ${{ secrets.HOSTNAME  }}
+          USER_NAME: ${{ secrets.USER  }}
+
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+
+            #Now we have got the access of EC2 and we will start the deploy .
+            cd terraform
+            npm start
+          '
