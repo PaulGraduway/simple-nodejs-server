@@ -46,6 +46,6 @@ jobs:
 
             #Now we have got the access of EC2 and we will start the deploy .
             cd terraform
-            npm install pm2 -g
-            pm2 start npm -- start
+            sudo npm install pm2 -g
+            sudo pm2 start npm -- start
           '
