@@ -4,5 +4,5 @@ http
     res.writeHead(200, { "Content-Type": "text/plain" });
     res.end(JSON.stringify({ status: "OK", date: new Date().toISOString() }));
   })
-  .listen(process.env.PORT || 8080);
-console.log(`Listening on port: ${process.env.PORT || 8080}`);
+  .listen(process.env.PORT || 4000);
+console.log(`Listening on port: ${process.env.PORT || 4000}`);
