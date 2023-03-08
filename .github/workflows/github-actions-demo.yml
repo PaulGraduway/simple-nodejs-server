@@ -40,4 +40,4 @@ jobs:
           SCRIPT_AFTER: |
             pwd
             pm2 delete all
-            pm2 npm -- start
+            pm2 start npm -- start
