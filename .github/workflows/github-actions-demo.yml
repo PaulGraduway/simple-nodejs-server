@@ -26,7 +26,7 @@ jobs:
           ssh-private-key: ${{ secrets.COMMON_TOKEN }}
 
       - name: Install Dependencies
-        run: cd terraform && ls && npm ci --omit=dev
+        run: cd server && ls && npm ci --omit=dev
 
       - name: Rsync Deploy
         uses: easingthemes/ssh-deploy@main
