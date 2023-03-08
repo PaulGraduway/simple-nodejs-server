@@ -37,10 +37,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.HOSTNAME }}
           REMOTE_USER: ${{ secrets.USER }}
           TARGET: "server"
-          SCRIPT_BEFORE: |
-            whoami
-            ls -al
           SCRIPT_AFTER: |
-            whoami
-            ls -al
-            echo $RSYNC_STDOUT
+            pwd
+            pm2 delete all
+            pm2 npm -- start
