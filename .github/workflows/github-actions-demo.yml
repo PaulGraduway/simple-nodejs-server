@@ -14,7 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          path: "terraform"
+          path: "server"
 
       - name: Install Node 16
         uses: actions/setup-node@v3
@@ -23,33 +23,24 @@ jobs:
 
       - uses: webfactory/ssh-agent@v0.7.0
         with:
-          ssh-private-key: |
-            ${{ secrets.COMMON_TOKEN }}
-            ${{ secrets.EC2_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.COMMON_TOKEN }}
 
       - name: Install Dependencies
         run: cd terraform && ls && npm ci --omit=dev
 
       - name: Rsync Deploy
-        uses: burnett01/rsync-deployments@5.1
-        with:
-          switches: -avzr -delete
-          path: ./
-          remote_path: /home/${{ secrets.USER }}/
-          remote_host: ${{ secrets.HOSTNAME}}
-          remote_user: ${{ secrets.USER }}
-
-      - name: SSH in EC2
+        uses: easingthemes/ssh-deploy@main
         env:
-          HOSTNAME: ${{ secrets.HOSTNAME }}
-          USER_NAME: ${{ secrets.USER }}
-
-        run: |
-          ssh -o StrictHostKeyChecking=no ${USER_NAME}@${HOSTNAME} '
-
-            #Now we have got the access of EC2 and we will start the deploy .
-            cd terraform
-            sudo npm install pm2 -g
-            sudo pm2 delete all
-            sudo pm2 start npm -- start
-          '
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+          ARGS: "-rlgoDzvc -i"
+          SOURCE: "server/"
+          REMOTE_HOST: ${{ secrets.HOSTNAME }}
+          REMOTE_USER: ${{ secrets.USER }}
+          TARGET: "server"
+          SCRIPT_BEFORE: |
+            whoami
+            ls -al
+          SCRIPT_AFTER: |
+            whoami
+            ls -al
+            echo $RSYNC_STDOUT
