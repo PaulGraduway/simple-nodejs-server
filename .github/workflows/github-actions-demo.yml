@@ -21,10 +21,12 @@ jobs:
         with:
           node-version: "16"
 
+      - uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.COMMON_TOKEN }}
+
       - name: Install Dependencies
         run: cd terraform && ls && npm ci --omit=dev
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.COMMON_TOKEN }}
 
       - name: Rsync Deploy
         uses: burnett01/rsync-deployments@5.1
